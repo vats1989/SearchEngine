@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/Crawler/mongo-java-driver-2.10.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/Crawler/tika-app-1.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/lucene-3.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/lucene-analyzers-3.5.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_65">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/crawler4j-3.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/common-lang3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/jackson-all-1.9.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/com.springsource.com.sleepycat.je-3.3.87.jar"/>
+	<classpathentry kind="lib" path="C:/Users/DJ/Downloads/je-5.0.73.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
