@@ -2,8 +2,7 @@ package springmvc.web.model;
 
 import java.util.*;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.simple.*;
 
 import com.mongodb.*;
 
@@ -70,15 +69,32 @@ public class Database {
 		collection.insert(document);
 	}
 
-	public void insertDB(String url, String doc, String filePath,
-			String metadata, boolean flag) {
+	public String getUrlByFileName(String filename)	{
+		BasicDBObject query = new BasicDBObject("filename", filename);
+		DBCursor cursor = collection.find(query);
+		BasicDBObject db = null;
+		String url = null;
+		while (cursor.hasNext()) {
+			db = (BasicDBObject) cursor.next();
+		}
+		if(db != null)
+			url = db.get("url").toString();
+		return url;
+	}
+	
+	public void insertFileDetails(String url, UUID filename, String filepath)	{
 		BasicDBObject document = new BasicDBObject();
 		document.put("url", url);
-		document.put("document", doc);
-		if (metadata != null)
-			document.put("metadata", metadata);
-		document.put("filePath", filePath);
-		document.put("createdDate", new Date());
+		document.put("filename", filename.toString());
+		document.put("filepath", filepath);
+		collection.insert(document);
+	}
+	
+	public void insertDB(String url, String filePath, String metadata) {
+		BasicDBObject document = new BasicDBObject();
+		document.put("url", url);
+		document.put("metadata", metadata);
+		document.put("filpath", filePath);
 		collection.insert(document);
 	}
 
@@ -95,7 +111,7 @@ public class Database {
 			BasicDBObject[] lightArr = array.toArray(new BasicDBObject[0]);
 			map = new HashMap<String, Double>();
 			for (BasicDBObject dbObj : lightArr)
-				map.put(dbObj.get("path").toString(),
+				map.put(dbObj.get("url").toString(),
 						Double.parseDouble(dbObj.get("tfidf").toString()));
 		}
 		return map;
