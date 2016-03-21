@@ -1,5 +1,6 @@
 package src;
 
+
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.standard.*;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -9,7 +10,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.*;
 import org.apache.lucene.store.*;
 import org.apache.lucene.util.Version;
 import org.apache.tika.exception.TikaException;
@@ -19,26 +19,25 @@ import org.apache.tika.sax.*;
 import org.tartarus.snowball.ext.PorterStemmer;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
 import java.io.*;
 import java.util.*;
 
 public class CallIndexFiles {
 
-	static final String docsPath = "C:\\CrawlerFiles\\wiki-small";
-	static final String indexPath = "C:\\CrawlerFiles\\indexing";
+	//static final String docsPath = "F:\\CrawlerFiles\\wiki-small";
+	//static final String docsPath = "F:\\WebDevelopmentWork\\WebCrawler\\CrawlerStorage";
+	static final String indexPath = "F:\\MyIndexing\\indexing";
 	static final String FIELD_PATH = "path";
 	static final String FIELD_CONTENTS = "contents";
 	static PorterStemmer stemmer = new PorterStemmer();
-	static Set<String> list = StopWords.getStopWords();
+	static Set<String> list = StopWords.getSmartStopWords();
 
 	@SuppressWarnings("deprecation")
-	public static void main(String[] args) throws SAXException, TikaException,
-			ParseException {
-
+	public CallIndexFiles(String doc_dir) throws SAXException, TikaException	{
+		
 		boolean create = true;
 
-		final File docDir = new File(docsPath);
+		final File docDir = new File(doc_dir);
 		if (!docDir.exists() || !docDir.canRead()) {
 			System.out
 					.println("Document directory '"
@@ -57,10 +56,11 @@ public class CallIndexFiles {
 					analyzer);
 
 			if (create) {
-				
+				// Create a new index in the directory, removing any
+				// previously indexed documents:
 				iwc.setOpenMode(OpenMode.CREATE);
 			} else {
-			
+				// Add new documents to an existing index:
 				iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
 			}
 			iwc.setRAMBufferSizeMB(1024.0);
@@ -68,6 +68,7 @@ public class CallIndexFiles {
 			IndexWriter writer = new IndexWriter(dir, iwc);
 			indexDocs(writer, docDir);
 
+			// writer.forceMerge(1);
 			writer.optimize();
 			writer.close();
 
@@ -78,9 +79,9 @@ public class CallIndexFiles {
 		} catch (IOException e) {
 			System.out.println(" caught a " + e.getClass()
 					+ "\n with message: " + e.getMessage());
-		}
+		}		
 	}
-
+	
 	@SuppressWarnings("resource")
 	static void indexDocs(IndexWriter writer, File file) throws IOException,
 			SAXException, TikaException {
@@ -101,7 +102,8 @@ public class CallIndexFiles {
 				}
 				try {
 
-					
+					// Tika tika = new Tika();
+					// tika.setMaxStringLength(10*1024*1024*10000);
 					int maxStringLength = 10 * 1024 * 1024;
 					WriteOutContentHandler handler = new WriteOutContentHandler(
 							maxStringLength);
@@ -130,17 +132,17 @@ public class CallIndexFiles {
 					while (stopFilter.incrementToken()) {
 						final String token = charTermAttribute.toString()
 								.toString();
-						stemmer.setCurrent(token);
-						stemmer.stem();
-						String word = stemmer.getCurrent();
-						if(!list.contains(word))
-							sb.append(stemmer.getCurrent()).append(System.getProperty("line.separator"));
+						//stemmer.setCurrent(token);
+						//stemmer.stem();
+						//String word = stemmer.getCurrent();
+						//if(!list.contains(word))
+							//sb.append(stemmer.getCurrent()).append(System.getProperty("line.separator"));
+						sb.append(token).append(System.getProperty("line.separator"));
 					}
 
 					Document doc = new Document();
 
-					Field pathField = new Field("path", file.getPath(),
-							Field.Store.YES, Field.Index.NO);
+					Field pathField = new Field("path", file.getPath(),	Field.Store.YES, Field.Index.NO);
 					pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
 					doc.add(pathField);
 
@@ -148,8 +150,8 @@ public class CallIndexFiles {
 					String docName[] = docurl.split("\\\\");
 					docurl = docName[docName.length - 1];
 
-					Field urlField = new Field("url", docurl, Field.Store.YES,
-							Field.Index.NO);
+					// add documane name
+					Field urlField = new Field("url", docurl, Field.Store.YES, Field.Index.NO);
 					urlField.setIndexOptions(IndexOptions.DOCS_ONLY);
 					doc.add(urlField);
 
@@ -157,13 +159,10 @@ public class CallIndexFiles {
 					modifiedField.setLongValue(file.lastModified());
 					doc.add(modifiedField);
 
-					doc.add(new Field("contents", new BufferedReader(
-							new InputStreamReader(new ByteArrayInputStream(sb
-									.toString().getBytes()), "UTF-8")),
-							Field.TermVector.YES));
+					doc.add(new Field("contents", new BufferedReader(new InputStreamReader(new ByteArrayInputStream(sb.toString().getBytes()), "UTF-8")),Field.TermVector.YES));
 
 					if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
-						System.out.println("adding " + file);
+						//System.out.println("adding " + file);
 						writer.addDocument(doc);
 					} else {
 						System.out.println("updating " + file);
@@ -175,5 +174,9 @@ public class CallIndexFiles {
 				}
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws SAXException, TikaException {
+		new CallIndexFiles("F:\\WebDevelopmentWork\\WebCrawler\\CrawlerStorage");
 	}
 }
