@@ -8,10 +8,10 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script>
 	$(function() {
-		var availableTags = [ "ActionScript", "AppleScript", "Asp",
-				"BASIC", "C", "C++", "Clojure", "COBOL", "ColdFusion",
-				"Erlang", "Fortran", "Groovy", "Haskell", "Java", "JavaScript",
-				"Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme" ];
+		var availableTags = [ "ActionScript", "AppleScript", "Asp", "BASIC",
+				"C", "C++", "Clojure", "COBOL", "ColdFusion", "Erlang",
+				"Fortran", "Groovy", "Haskell", "Java", "JavaScript", "Lisp",
+				"Perl", "PHP", "Python", "Ruby", "Scala", "Scheme" ];
 		$("#search").autocomplete({
 			source : availableTags
 		});
@@ -68,22 +68,30 @@
 			</tr>
 		</table>
 	</c:if>
-	<br/><br/><br/><br/><br/><br/>
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
 	<c:if test="${result != null}">
 		<center>
 			<div class="input-group" style="width: 800px;">
 				<table align="center" border="0" style="width: 800px">
-					<thead>
 						<tr>
-							<th>Document</th>
-							<th>Score</th>
+							<td align="left"><b>Document</b></td>
+							<td align="center"><b>TFIDF</b></td>
+							<td align="center"><b>PageRank</b></td>
+							<td align="center"><b>Score</b></td>
 						</tr>
-					</thead>
-					<tbody>
+						<tr></tr>
+						<tr></tr>
 						<c:forEach items="${result}" var="res">
 							<tr>
-								<td><a href="${res.key}">${res.key}</a></td>
-								<td>${res.value}</td>
+								<td align="left"><a href="${res.path}">${res.title}</a></td>
+								<td align="center">${res.tfidfNorm}</td>
+								<td align="center">${res.pageRankNorm}</td>
+								<td align="center">${res.totalScore}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
